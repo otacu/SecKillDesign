@@ -123,6 +123,7 @@ public class SecKillService {
 
         long addResult = jedis.sadd(hasBoughtSetKey,user.getId().toString());
         if (addResult > 0){
+            record =  new Record(null,user,product,SecKillEnum.SUCCESS.getCode(),SecKillEnum.SUCCESS.getMessage(),new Date());
             log.info(record.toString());
             boolean insertFlag = secKillMapper.insertRecord(record);
             if (insertFlag){

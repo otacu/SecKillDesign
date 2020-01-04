@@ -14,7 +14,8 @@ CREATE TABLE product(
     productName VARCHAR (20) UNIQUE NOT NULL comment "产品名称",
     price DECIMAL(16,3) NOT NULL comment "价格",
     stock INT NOT NULL comment "库存",
-    createTime DATE NOT NULL comment "创建时间"
+    createTime DATE NOT NULL comment "创建时间",
+    version INT NOT NULL comment "版本号"
 );
 
 DROP TABLE IF EXISTS record;
