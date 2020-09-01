@@ -1,20 +1,18 @@
 package com.scut.seckill.controller;
 
-import com.scut.seckill.cache.RedisCacheHandle;
 import com.scut.seckill.common.Message;
 import com.scut.seckill.common.SecKillEnum;
 import com.scut.seckill.service.SecKillService;
 import com.scut.seckill.web.req.SecKillRequest;
 import com.scut.seckill.web.vo.SecKillResponse;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import redis.clients.jedis.Jedis;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 @RequestMapping("/seckill")
 @RestController
@@ -78,6 +76,20 @@ public class SecKillController {
         paramMap.put("userId",requestMessage.getBody().getUserId());
         paramMap.put("productId",requestMessage.getBody().getProductId());
         SecKillEnum secKillEnum = secKillService.handleByAtomicInteger(paramMap);
+        Message<SecKillResponse> responseMessage = new Message<>(secKillEnum,null);
+        return responseMessage;
+    }
+
+    /**
+     * 利用redis的watch监控的特性（我自己改进在高并发情况下重复购买的漏洞）
+     * @throws InterruptedException
+     */
+    @RequestMapping(value = "/baseOnRedisWatch2",method = RequestMethod.POST)
+    public Message<SecKillResponse> baseOnRedisWatch2(@RequestBody Message<SecKillRequest> requestMessage) throws InterruptedException {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("userId",requestMessage.getBody().getUserId());
+        paramMap.put("productId",requestMessage.getBody().getProductId());
+        SecKillEnum secKillEnum = secKillService.handleByRedisWatch2(paramMap);
         Message<SecKillResponse> responseMessage = new Message<>(secKillEnum,null);
         return responseMessage;
     }
